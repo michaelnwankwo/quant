@@ -1,0 +1,7 @@
+{
+  "XAUUSD": "yfinance",
+  "XAGUSD": "yfinance",
+  "EURUSD": "yfinance",
+  "USDCHF": "yfinance",
+  "USDJPY": "yfinance"
+}

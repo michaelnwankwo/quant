@@ -1,0 +1,211 @@
+{
+    // =====================================================================
+    // quant_system - VS Code debug / run profiles (Windows)
+    // =====================================================================
+    // Run & Debug panel: Ctrl+Shift+D, pick a profile, press F5.
+    //
+    // Two details matter for THIS project:
+    //
+    //  1. "console": "integratedTerminal" is REQUIRED.  The bot installs
+    //     SIGINT/SIGTERM handlers, and the halt-file watcher only helps if
+    //     the process is actually alive.  Launching into the Debug Console
+    //     ("internalConsole") swallows Ctrl+C.
+    //
+    //  2. --max-iterations 0 means "run until stopped".  The CLI default is 5
+    //     cycles, which would exit a trading session after ~5 polls.  Every
+    //     long-running profile below sets it explicitly.
+    //
+    // "type": "debugpy" is the current value.  "python" is deprecated.
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // -------------------------------------------------------------
+            // PROFILE 1 - Verify pipeline (safe, read-only, ~60 s)
+            // -------------------------------------------------------------
+            "name": "1. Verify Pipeline (--mode verify)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\main.py",
+            "args": [
+                "--mode",
+                "verify"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            // -------------------------------------------------------------
+            // PROFILE 2 - Backtest + walk-forward optimisation (~3-5 min)
+            // -------------------------------------------------------------
+            "name": "2. Backtest & WFO (--mode both)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\main.py",
+            "args": [
+                "--mode",
+                "both",
+                "--source",
+                "auto",
+                "--wfo-grid",
+                "fast"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            // -------------------------------------------------------------
+            // PROFILE 3 - UNLIMITED DEMO (paper) - no real capital at risk
+            // -------------------------------------------------------------
+            // --demo lifts the daily trade-frequency cap.  Sizing, Kelly,
+            // risk parity and the ATR stops are IDENTICAL to live.
+            "name": "3. DEMO: MT5 Paper Trading (--broker mt5 --demo --enable-voice)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\main.py",
+            "args": [
+                "--mode",
+                "live",
+                "--broker",
+                "mt5",
+                "--demo",
+                "--enable-voice",
+                "--max-iterations",
+                "0",
+                "--poll-seconds",
+                "60"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            // -------------------------------------------------------------
+            // PROFILE 4 - LIVE REAL CAPITAL.  Triple-check before pressing F5.
+            // -------------------------------------------------------------
+            // --no-demo          enforce the daily trade cap
+            // --max-daily-trades 5
+            // --flatten-on-exit   flatten on Ctrl+C or reports\HALT
+            "name": "4. ⚠ LIVE REAL MONEY (--no-demo --flatten-on-exit)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\main.py",
+            "args": [
+                "--mode",
+                "live",
+                "--broker",
+                "mt5",
+                "--no-demo",
+                "--max-daily-trades",
+                "5",
+                "--capital",
+                "25000",
+                "--max-iterations",
+                "0",
+                "--poll-seconds",
+                "300",
+                "--enable-voice",
+                "--flatten-on-exit"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            // -------------------------------------------------------------
+            // PROFILE 5 - Demo against the in-process SIMULATED broker.
+            // No MT5 terminal needed.  Same strategy code path as Profile 3.
+            // -------------------------------------------------------------
+            "name": "5. DEMO: Simulated Broker (no MT5 required)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\main.py",
+            "args": [
+                "--mode",
+                "live",
+                "--broker",
+                "simulated",
+                "--demo",
+                "--enable-voice",
+                "--voice-mode",
+                "file",
+                "--max-iterations",
+                "0",
+                "--poll-seconds",
+                "30"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            // -------------------------------------------------------------
+            // PROFILE 6 - Environment pre-flight (audio / toasts / MT5)
+            // -------------------------------------------------------------
+            "name": "6. Environment Pre-flight (--speak)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\scripts\\preflight.py",
+            "args": [
+                "--speak"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            // -------------------------------------------------------------
+            // PROFILE 7 - pytest suite under the debugger
+            // -------------------------------------------------------------
+            "name": "7. pytest: full suite",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "tests",
+                "-q"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            // -------------------------------------------------------------
+            // PROFILE 8 - Attach to an already-running session
+            // -------------------------------------------------------------
+            // Start the bot with:
+            //   python -m debugpy --listen 5678 --wait-for-client main.py --mode live ...
+            // then run this profile.
+            "name": "8. Attach to running session (port 5678)",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "justMyCode": true
+        }
+    ]
+}

@@ -1,0 +1,114 @@
+{
+  // =====================================================================
+  // quant_system - VS Code workspace settings (Windows)
+  // =====================================================================
+  // Paths use DOUBLE backslashes: this is JSON, not PowerShell.
+
+  // --- Python interpreter (the venv created in Section 1) --------------
+  "python.defaultInterpreterPath": "quant_system\\venv\\Scripts\\python.exe",
+
+  // --- Language server / IntelliSense ---------------------------------
+  // 'basic' catches the obvious type errors; switch to 'strict' if you
+  // want the full pass over the typed codebase.
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.extraPaths": ["quant_system"],
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.diagnosticMode": "workspace",
+
+  // --- Testing ---------------------------------------------------------
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": ["tests"],
+
+  // --- Formatting / linting -------------------------------------------
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    },
+    "editor.rulers": [100]
+  },
+  "black-formatter.args": ["--line-length", "100"],
+  "isort.args": ["--profile", "black", "--line-length", "100"],
+  "flake8.args": ["--max-line-length=100", "--extend-ignore=E203,W503"],
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[markdown]": {
+    "editor.wordWrap": "on"
+  },
+
+  // --- Integrated terminal: PowerShell by default ----------------------
+  // Required so './venv/Scripts/Activate.ps1' works and so Ctrl+C reaches
+  // the trading process (see launch.json -> "console": "integratedTerminal").
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "source": "PowerShell",
+      "icon": "terminal-powershell"
+    },
+    "Command Prompt": {
+      "path": [
+        "${env:windir}\\Sysnative\\cmd.exe",
+        "${env:windir}\\System32\\cmd.exe"
+      ],
+      "icon": "terminal-cmd"
+    },
+    "Git Bash": {
+      "source": "Git Bash",
+      "icon": "terminal-bash"
+    }
+  },
+  // Launch every new terminal in the workspace root so relative paths
+  // (reports/, data_cache/) resolve the same way as in the CLI.
+  "terminal.integrated.cwd": "quant_system",
+
+  // --- Editor hygiene --------------------------------------------------
+  "editor.rulers": [100],
+  "editor.formatOnSave": true,
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "files.autoSave": "off",
+
+  // --- Explorer: hide generated noise ---------------------------------
+  // data_cache/ and reports/ can hold thousands of files; hiding them from
+  // the explorer keeps the tree responsive. They are still on disk.
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/.ruff_cache": true,
+    "venv/**": true
+  },
+  // Also stop the file-watcher (inotify equivalent) from churning on them.
+  "files.watcherExclude": {
+    "**/data_cache/**": true,
+    "**/reports/**": true,
+    "**/__pycache__/**": true,
+    "**/venv/**": true
+  },
+
+  // --- Search ----------------------------------------------------------
+  "search.exclude": {
+    "**/data_cache": true,
+    "**/venv": true,
+    "**/*.pkl": true,
+    "**/*.wav": true
+  },
+
+  // --- Debug -----------------------------------------------------------
+  // Step into library code only when you explicitly ask for it.
+  "debugpy.debugJustMyCode": true,
+  "debug.inlineValues": true,
+
+  // --- Secrets ---------------------------------------------------------
+  // Keep MT5 credentials out of settings.py: put them in a local .env file
+  // (git-ignored) and read them with os.environ / python-dotenv.
+  "python.envFile": "quant_system\\.env",
+
+  // --- Notebook-free project -------------------------------------------
+  "jupyter.enabled": false
+}

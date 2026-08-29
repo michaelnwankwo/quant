@@ -1,0 +1,265 @@
+{
+    // =====================================================================
+    // quant_system - VS Code tasks (Terminal > Run Task...  or Ctrl+Shift+B)
+    // =====================================================================
+    // Run a task:  Ctrl+Shift+P -> "Tasks: Run Task" -> pick one.
+    // These are shell tasks; they spawn PowerShell and do NOT attach the
+    // debugger, so they are the right way to run long trading sessions
+    // (F5 debugging can pause the bot at a breakpoint mid-trade).
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "preflight: environment check",
+            "type": "shell",
+            "command": ".\\venv\\Scripts\\python.exe",
+            "args": [
+                "scripts/preflight.py",
+                "--speak"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "pytest: full suite",
+            "type": "shell",
+            "command": ".\\venv\\Scripts\\python.exe",
+            "args": [
+                "-m",
+                "pytest",
+                "-q"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "verify: end-to-end pipeline (75 checks)",
+            "type": "shell",
+            "command": ".\\venv\\Scripts\\python.exe",
+            "args": [
+                "main.py",
+                "--mode",
+                "verify"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "backtest: 2016-2024",
+            "type": "shell",
+            "command": ".\\venv\\Scripts\\python.exe",
+            "args": [
+                "main.py",
+                "--mode",
+                "backtest",
+                "--source",
+                "auto",
+                "--start",
+                "2016-01-01",
+                "--end",
+                "2024-12-31"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "walk-forward: backtest + WFO (fast grid)",
+            "type": "shell",
+            "command": ".\\venv\\Scripts\\python.exe",
+            "args": [
+                "main.py",
+                "--mode",
+                "both",
+                "--source",
+                "auto",
+                "--wfo-grid",
+                "fast"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "HALT: create sentinel (stop the bot)",
+            "type": "shell",
+            "command": "New-Item",
+            "args": [
+                "-ItemType",
+                "File",
+                "-Force",
+                "-Path",
+                "reports\\HALT"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "shell": {
+                    "executable": "powershell.exe",
+                    "args": [
+                        "-NoProfile",
+                        "-Command"
+                    ]
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "HALT: remove sentinel (allow restart)",
+            "type": "shell",
+            "command": "Remove-Item",
+            "args": [
+                "-Force",
+                "-ErrorAction",
+                "SilentlyContinue",
+                "-Path",
+                "reports\\HALT"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "shell": {
+                    "executable": "powershell.exe",
+                    "args": [
+                        "-NoProfile",
+                        "-Command"
+                    ]
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "logs: tail quant_system.log",
+            "type": "shell",
+            "command": "Get-Content",
+            "args": [
+                "-Path",
+                "reports\\logs\\quant_system.log",
+                "-Wait",
+                "-Tail",
+                "40"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "shell": {
+                    "executable": "powershell.exe",
+                    "args": [
+                        "-NoProfile",
+                        "-Command"
+                    ]
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": [],
+            "isBackground": true
+        },
+        {
+            "label": "logs: show errors & rejections",
+            "type": "shell",
+            "command": "Select-String",
+            "args": [
+                "-Path",
+                "reports\\logs\\quant_system.log",
+                "-Pattern",
+                "ERROR|CRITICAL|rejected|retcode=",
+                "|",
+                "Select-Object",
+                "-Last",
+                "30"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "shell": {
+                    "executable": "powershell.exe",
+                    "args": [
+                        "-NoProfile",
+                        "-Command"
+                    ]
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "reports: open backtest summary",
+            "type": "shell",
+            "command": "Get-Content",
+            "args": [
+                "-Path",
+                "reports\\backtest_summary.txt"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "shell": {
+                    "executable": "powershell.exe",
+                    "args": [
+                        "-NoProfile",
+                        "-Command"
+                    ]
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

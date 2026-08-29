@@ -1,0 +1,55 @@
+==============================================================================
+BACKTEST PERFORMANCE SUMMARY
+==============================================================================
+                    start_equity : 1,000,000.0000
+                    final_equity : 1,004,420.6608
+                total_return_pct : 0.4421
+                        cagr_pct : 0.0403
+                    sharpe_ratio : 0.0743
+                   sortino_ratio : 0.0516
+                    calmar_ratio : 0.0370
+                max_drawdown_pct : 1.0877
+      max_drawdown_duration_bars : 8.0000
+                   recovery_bars : 1,528.0000
+                   drawdown_bars : 2,538.0000
+       annualised_volatility_pct : 0.5633
+                      var_95_pct : 0.0039
+                     cvar_95_pct : 0.0440
+                    hit_rate_pct : 22.1819
+             active_hit_rate_pct : 48.1132
+                    exposure_pct : 46.1037
+                 best_period_pct : 0.8192
+                worst_period_pct : -0.7292
+                     num_periods : 2,759.0000
+                     max_dd_peak : 2015-12-14
+                   max_dd_trough : 2015-12-24
+                      num_trades : 288
+                        win_rate : 0.5208
+                         avg_win : 145.3918
+                        avg_loss : 127.5533
+                      expectancy : 14.6056
+                  expectancy_pct : -42,313.0841
+                   profit_factor : 1.2390
+                     largest_win : 2,881.6955
+                    largest_loss : -1,183.3723
+                    payoff_ratio : 1.1399
+                   avg_bars_held : 61.7118
+
+REGIME-CONDITIONAL BREAKDOWN
+------------------------------------------------------------------------------
+                                label    bars  share_pct  total_return_pct  mean_return_bps  sharpe_ratio  sortino_ratio  max_drawdown_pct  hit_rate_pct  expectancy  num_trades  win_rate_pct
+state                                                                                                                                                                                         
+0        Low-Volatility / Range-Bound  1145.0  41.500544          0.023858         0.003532      0.010412       0.007331          1.087725     21.222707   23.394427       147.0     51.020408
+1        High-Momentum / Strong Trend   575.0  20.840884         -0.110644        -0.019173     -0.240899      -0.156456          0.259859     25.565217   -6.006301        68.0     58.823529
+2      High-Volatility / Market Shock  1039.0  37.658572          0.529338         0.050843      1.029514       2.012890          0.060656     21.366699   16.107783        73.0     47.945205
+
+REGIME TRANSITION MATRIX
+------------------------------------------------------------------------------
+to           0         1         2
+from                              
+0     0.621670  0.227353  0.150977
+1     0.438261  0.440000  0.121739
+2     0.166667  0.063584  0.769750
+
+Events logged: 1350
+==============================================================================

@@ -1,0 +1,53 @@
+# ---------------------------------------------------------------------------
+# quant_system - mandatory + optional dependencies
+# ---------------------------------------------------------------------------
+# Core numerical / data stack
+numpy>=1.26,<3.0
+pandas>=2.1,<3.0
+scipy>=1.11
+
+# Econometrics (Engle-Granger cointegration, ADF, OLS hedge ratios)
+statsmodels>=0.14
+
+# Regime detection (Gaussian HMM)
+#
+# WINDOWS / PYTHON VERSION WARNING -- read before installing.
+# hmmlearn compiles a Cython extension (_hmmc) and only publishes
+# 64-bit Windows wheels for CPython 3.8 - 3.13 (tags: cp38..cp313, win_amd64).
+# There is NO cp314+ wheel and NO win32 / win_arm64 wheel.  On any other
+# interpreter pip falls back to the source tarball and fails with:
+#     error: Microsoft Visual C++ 14.0 or greater is required.
+# Fix: use 64-bit CPython 3.13 (or 3.12), or install the MSVC Build Tools.
+# Check your interpreter with:
+#     python -c "import sys,struct;print(sys.version);print(struct.calcsize('P')*8,'bit')"
+#     python -m pip install --only-binary=:all: hmmlearn   # instant yes/no
+hmmlearn>=0.3.0
+
+# Feature scaling / ML utilities
+scikit-learn>=1.3
+
+# Event-driven backtesting toolkit (reference / cross-validation of our engine)
+backtrader>=1.9.78.123
+
+# Market data ingestion
+yfinance>=0.2.40
+
+# ---------------------------------------------------------------------------
+# Trade notifications (desktop toasts + spoken alerts)
+# ---------------------------------------------------------------------------
+pyttsx3>=2.90            # offline TTS; needs espeak-ng (Linux) or SAPI5 (Windows)
+PyQt6>=6.5               # frameless auto-closing desktop toasts
+
+# Unit testing
+pytest>=7.4
+
+# ---------------------------------------------------------------------------
+# Optional - reporting & live execution
+# ---------------------------------------------------------------------------
+matplotlib>=3.8
+websockets>=12.0            # FIX-over-WebSocket / real-time market data stream
+
+# MetaTrader5 is Windows-only (it bundles a Windows DLL).  Install it only on a
+# Windows host that already has the MetaTrader 5 terminal installed:
+#     MetaTrader5>=5.0.45 ; platform_system == "Windows"
+MetaTrader5>=5.0.45 ; platform_system == "Windows"
